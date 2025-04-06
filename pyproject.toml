@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "local-agent-model"
+version = "0.1.0"
+description = ""
+authors = ["momonong <morrischen2.9@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+torch = "^2.6.0"
+poethepoet = "*"
+torchvision = {version = "^0.21.0", source = "pypi"}
+torchaudio = {version = "^2.6.0", source = "pypi"}
+accelerate = {version = "^1.6.0", source = "pypi"}
+peft = {version = "^0.15.1", source = "pypi"}
+bitsandbytes = {version = "^0.45.4", source = "pypi"}
+datasets = {version = "^3.5.0", source = "pypi"}
+trl = {version = "^0.16.0", source = "pypi"}
+sentencepiece = {version = "^0.2.0", source = "pypi"}
+einops = {version = "^0.8.1", source = "pypi"}
+wandb = {version = "^0.19.9", source = "pypi"}
+scipy = {version = "^1.15.2", source = "pypi"}
+tqdm = {version = "^4.67.1", source = "pypi"}
+qwen = {extras = ["gpu"], version = "^0.1.1"}
+numpy = "^2.2.4"
+numba = "^0.61.0"
+qwen-omni-utils = {extras = ["decord"], version = "^0.0.3"}
+huggingface-hub = {extras = ["cli"], version = "^0.30.1"}
+xformers = "^0.0.29.post3"
+transformers = "^4.50.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+install-ltt = "python3 -m pip install light-the-torch"
+run-ltt = "python3 -m light_the_torch install --upgrade torch torchaudio torchvision"
+autoinstall-torch-cuda = ["install-ltt", "run-ltt"]

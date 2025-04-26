@@ -4,21 +4,22 @@ import os, torch
 from datasets import load_dataset
 from transformers import (
     AutoTokenizer, AutoModelForCausalLM,
-    BitsAndBytesConfig
+    BitsAndBytesConfig, EarlyStoppingCallback
 )
 from peft import LoraConfig, get_peft_model
 from trl import SFTTrainer, SFTConfig
+from utils.save_best_model import SaveBestModelCallback
 
 # ====== 設定區 ======
 MODEL_ID = "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B"
 DATA_PATH = "data/agent_action_plan_split.jsonl"
 MAX_LEN = 1024
 BATCH = 1
-GRAD_ACC = 8
+GRAD_ACC = 4
 LR = 5e-5
-OUT_DIR = "model/deepseek14b-lora"
+OUT_DIR = "models/deepseek14b-lora"
 LOG_DIR = "logs/deepseek14b-lora"
-EPOCHS = 8
+EPOCHS = 40
 LOGGING_STEPS = 10
 SAVE_STEPS = 50
 SAVE_TOTAL_LIMIT = 2
@@ -51,7 +52,7 @@ lora_cfg = LoraConfig(
     r=16,
     lora_alpha=64,
     target_modules=["q_proj", "v_proj"],
-    lora_dropout=0.1,
+    lora_dropout=0.05,
     bias="none",
     task_type="CAUSAL_LM",
 )
@@ -96,9 +97,11 @@ trainer = SFTTrainer(
     args=sft_config,
     train_dataset=ds,
     processing_class=tokenizer,
+    callback=[SaveBestModelCallback(),
+              EarlyStoppingCallback(early_stopping_patience=10)],
 )
 
 # ✅ 開始訓練與保存 LoRA adapter
-trainer.train()
+trainer.train(resume_from_checkpoint=True)
 trainer.save_model(OUT_DIR)
 tokenizer.save_pretrained(OUT_DIR)

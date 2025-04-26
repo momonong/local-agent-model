@@ -16,8 +16,9 @@ MAX_LEN = 1024
 BATCH = 1
 GRAD_ACC = 8
 LR = 5e-5
-OUT_DIR = "model/agent14b-lora"
-EPOCHS = 5
+OUT_DIR = "model/deepseek14b-lora"
+LOG_DIR = "logs/deepseek14b-lora"
+EPOCHS = 8
 LOGGING_STEPS = 10
 SAVE_STEPS = 50
 SAVE_TOTAL_LIMIT = 2
@@ -47,10 +48,10 @@ base_model = AutoModelForCausalLM.from_pretrained(
 )
 
 lora_cfg = LoraConfig(
-    r=8,
-    lora_alpha=32,
+    r=16,
+    lora_alpha=64,
     target_modules=["q_proj", "v_proj"],
-    lora_dropout=0.05,
+    lora_dropout=0.1,
     bias="none",
     task_type="CAUSAL_LM",
 )
@@ -81,7 +82,7 @@ sft_config = SFTConfig(
     max_seq_length=MAX_LEN,
     fp16=True,
     packing=True,
-    logging_dir="log/tb",
+    logging_dir=LOG_DIR,
     logging_strategy="steps",
     logging_steps=LOGGING_STEPS,
     save_steps=SAVE_STEPS,

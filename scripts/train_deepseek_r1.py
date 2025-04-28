@@ -97,11 +97,10 @@ trainer = SFTTrainer(
     args=sft_config,
     train_dataset=ds,
     processing_class=tokenizer,
-    callback=[SaveBestModelCallback(),
-              EarlyStoppingCallback(early_stopping_patience=10)],
+    callbacks=[SaveBestModelCallback()],
 )
 
 # ✅ 開始訓練與保存 LoRA adapter
-trainer.train(resume_from_checkpoint=True)
+trainer.train(resume_from_checkpoint=False)
 trainer.save_model(OUT_DIR)
 tokenizer.save_pretrained(OUT_DIR)

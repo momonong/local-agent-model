@@ -4,7 +4,7 @@ from peft import PeftModel
 
 # 模型設定
 model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B"
-adapter_path = "model/deepseek14b-lora"
+adapter_path = "models/deepseek14b-lora"
 
 # 量化載入設定（與訓練時一致）
 bnb_cfg = BitsAndBytesConfig(
